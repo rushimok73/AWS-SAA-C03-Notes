@@ -2343,6 +2343,8 @@ size increases.
 - Billed as GB/month.
   - If you provision a 1TB for an entire month, you're billed as such.
   - If you have half of the data, you are billed for half of the month.
+- You can backup EBS using snapshots in S3 for migration and such
+- You cant have an EBS instance in one AZ and EC2 instance in another
 - Four types of volumes, each with a dominant performance attribute.
   - General purpose SSD (gp2)
   - Provisioned IOPS SSD (io1)
@@ -2355,6 +2357,8 @@ size increases.
 
 Uses a performance bucket architecture based on the IOPS it can deliver.
 The GP2 starts with 5,400,000 IOPS allocated. It is all available instantly.
+
+Volumes can range from 1GB to 16TB
 
 You can consume the capacity quickly or slowly over the life of the volume.
 The capacity is filled back based upon the volume size.
@@ -2473,6 +2477,16 @@ When to use Instance Store
 - Rigid lifecycle link between storage and the instance.
   - This ensures the data is erased when the instance goes down.
 
+Numbers
+
+- Cheap = ST1 or SC1 (HDD based)
+- Throughput or Streaming = ST1
+- Boot..... Not ST1 or SC1
+- GP2/3 upto 16000 IOPS
+- IO1/2 up to 64000 IOPS
+- RAID0 + EBS up to 260000 IOPS
+- More than 260000 IOPS - Instance Store
+
 ### 1.6.8. EBS Snapshots, restore, and fast snapshot restore
 
 - Efficient way to backup EBS volumes to S3.
@@ -2481,8 +2495,8 @@ When to use Instance Store
 
 Snapshots are incremental volume copies to S3.
 The first is a **full copy** of `data` on the volume. This can take some time.
-EBS won't be impacted, but will take time in the background.
-Future snaps are incremental, consume less space and are quicker to perform.
+EBS won't be impacted but will take time in the background.
+Future snaps are incremental, consume less space, and are quicker to perform.
 
 If you delete an incremental snapshot, it moves data to ensure subsequent
 snapshots will work properly.
@@ -2552,8 +2566,7 @@ When data is stored at rest, it is stored as ciphertext.
 If the EBS volume is ever moved, the key is discarded.
 
 If a snapshot is made of an encrypted EBS volume, the same data encryption
-key is used for that snapshot. Anything made from this snapshot is also
-encrypted in the same way.
+key is used for that snapshot to encrypt it. Anything made from this snapshot is also encrypted in the same way.
 
 Every time you create a new EBS volume from scratch, it creates a new
 data encryption key.
@@ -2642,7 +2655,7 @@ around the license to different EC2 instances.
 - Different security groups are attached to different interfaces.
 - The OS doesn't see the IPv4 public address.
 - You always configure the private IPv4 private address on the interface.
-- Never configure an OS with a public IPv4 address.
+- Never will you configure an OS with a public IPv4 address.
 - IPv4 Public IPs are Dynamic, starting and stopping will kill it.
 
 Public DNS for a given instance will resolve to the primary private IP
