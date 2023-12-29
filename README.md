@@ -2752,6 +2752,34 @@ Can perform scheduled reservation when you can commit to specific time windows.
 Great if you have a known stead state usage, email usage, domain server.
 Cheapest option with no tolerance for disruption.
 
+Another Option - **Scheduled Reserved**
+Reserve machine for some specific time. Cheaper than on demand. Min 1200h/year needed
+
+
+
+#### 1.6.11.4. Dedicated Hosts
+
+Pay for the host. No instance charges. Capacity management required
+
+This type of hosting is still required in cases where licensing is based upon per physical core used rather than logical ones. 
+
+Good when you need host affinity - Run instances on certain hosts only (licensing implications)
+
+#### 1.6.11.5. Dedicated Instances
+
+Only your instance is run on that machine. Dedicated hardware
+
+#### 1.6.11.6. Capacity Reservation
+
+On-demand capacity reservations can be booked to ensure you always have capacity in an AZ. No cost reductions. Pay regardless of consuming it.
+
+#### 1.6.11.7. Savings Plan
+
+Hourly commitment for 1 or 3-year plan
+Reservation of general compute $ amounts (I am going to use x$ worth of compute for y years) Until you don't exceed the plan. After than normal on-demand billing
+
+
+
 ### 1.6.12. Instance Status Checks and Autorecovery
 
 Every instance has two high level status checks
@@ -2947,6 +2975,19 @@ This allows for spot pricing and prepayment.
 - Have small or burst style workloads.
 - Use batch or periodic workloads.
 
+### 1.7.4 EKS
+
+Elastic Kubernetes Service
+EKS Cluster = EKS Control Plane & EKS Nodes
+Nodes - self-managed, managed node groups or in fargate pods
+
+There are 2 VPCs
+VPC 1 - AWS Managed Control Plane - EKS admin endpoint
+VPC 2 - Customer managed Worker Nodes (EC2) - serves consumer
+
+
+
+
 ---
 
 ## 1.8. Advanced-EC2
@@ -3111,6 +3152,7 @@ parameter store.
 - Tied closely to IAM, can use
   - Long term credentials such as access keys.
   - Short term use of IAM roles.
+- If you have permissions to interact with the parameter store and the KMS key used to encrypt SecureStrings, you can request decrypted data aswell.
 
 ### 1.8.5. System and Application Logging on EC2
 
