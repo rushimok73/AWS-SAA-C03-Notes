@@ -3334,7 +3334,15 @@ zone name. A common architecure is to make the public hosted zone a subset of th
 containing only those records that are meant to be accessed from the Internet, while inside VPCs
 associated with the private hosted zone all resource records can be accessed.
 
-### 1.9.2. Route 53 Health Checks
+### 1.9.2.a. CNAME vs ALIAS
+"A" maps NAME to IP Address ex catagram.io -> 1.3.3.7
+CNAME names NAME to another NAME, but cant map apex names (catagram.io)
+Problem when you want to catagram.io -> Load balancer
+
+Solution: Use ALIAS to map name to AWS resource. Free in AWS.
+
+
+### 1.9.2.b. Route 53 Health Checks
 
 Route checks will allow for periodic health checks on the servers.
 If one of the servers has a bug, this will be removed from the list.
@@ -3350,7 +3358,7 @@ they are bots and block them, this could cause alarms.
 
 Checks occur every 30 seconds by default. This can be increased to 10 seconds
 for additional costs. These checks are per health checker. Since there are many
-you will automatically get one every few seconds. The 10 second option will
+you will automatically get one every few seconds. The 10 seco  nd option will
 complete multiple checks per second.
 
 There could be one of three checks
@@ -3404,6 +3412,8 @@ This can be used for licensing rights. If overlapping regions occur,
 the priority will always go to the most specific or smallest region. The US
 will be chosen over the North America record.
 
+- **Geoproximity**: Like latency, but returns smallest distance. You can use bias to make areas bigger/smaller. To optionally route more or less trafic to a region.
+
 - **Multi-value**: Simple records use one name and multiple values in this record.
 These will be health checked and the unhealthy responses will automatically
 be removed. With multi-value, you can have multiple records with the same
@@ -3415,6 +3425,16 @@ through to your customers. Great alternative to simple routing when
 you need to improve the reliability, and it's an alternative to failover
 when you have more than two records to respond with, but don't want
 the complexity or the overhead of weighted routing.
+
+### 1.9.4. Interoperability
+R53 normally - Registrar and hosting
+But can also - Registrar or hosting
+
+Hosting = Take money, allocate 4 NS, create a zonefle
+Registering = Communicate with TLD and share your NS
+
+### 1.9.5. DNSSEC with R53
+Tough
 
 ---
 
@@ -3558,7 +3578,7 @@ It is always a bad idea to do this.
 
 ### 1.10.3. Relational Database Service (RDS)
 
-- Database-as-a-service (DBaaS)
+- Database-as-a-service (not really) (DBaaS)
   - Not entirely true more of DatabaseServer-as-a-service.
   - Managed Database Instance for one or more databases.
 - No need to manage the HW or server itself.
@@ -3614,6 +3634,7 @@ instance. You cannot access the standby replica for any reason via RDS.
 
 The standby replica cannot be used for extra capacity.
 
+Snapshots (S3) taken from the replica
 **Synchronous Replication** means:
 
 1. Database writes happen.
@@ -3622,7 +3643,7 @@ The standby replica cannot be used for extra capacity.
 4. Standby replica commits writes.
 
 If any error occurs with the primary database, AWS detects this and will
-failover within 60 to 120 seconds to change to the new database.
+failover within 60 to 120 seconds to change to the new database, by updating CNAME to point to replica
 
 This does not provide fault tolerance as there will be some impact during change.
 
@@ -3643,7 +3664,19 @@ This does not provide fault tolerance as there will be some impact during change
   - If you change the type of a RDS instance, it will failover as part of
   changing that type.
 
+### 1.10.4. Multi AZ - Cluster Architecture
+In diff AZs(lets say 3( there is 1 read+writer , 1 reader and 1 reader. This makes reads more efficient. 
+There are 3 endpoints
+Cluster Endpoint - Used for reads, writes and admin
+Reader Endpoint - Used for reads 
+Instance Endpoint - Used for testing/fault finding
+
 ### 1.10.5. RDS Backup and Restores
+
+Automated Backups are done to AWS Managed S3 Buckets. You cannot see them in S3 console. Backups are taken from replicas. 
+They usually occur 1 a day. 
+
+Snapshots are done manually and dont expire unless you delete them
 
 RPO - Recovery Point Objective
 
@@ -3731,11 +3764,44 @@ encryption, configuration, and networking without intervention.
 - RRs are for reads only until promoted.
 - Offers global availability improvements and global resilience.
 
+### 1.10.7. RDS Security
+SSL/TLS available for RDS, can be mandatory
+Encryption at rest possible (done by the Host) - done on EBS with KMS. Use AWS or Customer Managed key (CMK)
+DB Engine has no encryption awareness
+
+RDS MSSQL and RDS Oracle support TDE - Transparent data encryption. When you dont trust the host, and also can use Cloud HSM (Keys not even managed by AWS)
+
+Traditionally DB Authentication done by local DB users. AWS Doesnt know
+But, IAM Users/Roles along with a DB User can create a 15min access token, requiring no need for a password. 
+However authorization in DB still depends on the user permissions.
+
+### 1.10.7. RDS Custom
+Niche
+Midway between own DB of EC2 and Amazon RDS
+To customize, Pause automation -> Customize -> restart automation for production use
+
 ### 1.10.7. Enhanced Monitoring
 
 CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance, and Enhanced Monitoring gathers its metrics from an agent on the instance. As a result, you might find differences between the measurements, because the hypervisor layer performs a small amount of work. The differences can be greater if your DB instances use smaller instance classes, because then there are likely more virtual machines (VMs) that are managed by the hypervisor layer on a single physical instance. 
 
 > Enhanced Monitoring metrics are useful when you want to see how different processes or threads on a DB instance use the CPU.
+
+### 1.10.7. RDS Proxy
+Opening and Closing DB connections consumes resources.
+Proxy is a pool of already open connections your application connects to
+
+Auto Scales, Highly Available
+Only accesible from VPC
+Can enforce SSL/TLS
+
+When to use?
+- Too many connection errors
+- Smaller instances like T2
+- Using AWS Lambda.
+- Long running connections, where low latency req
+- Resilience to DB failure is priority
+- Make failures transparent to applications (App doesnt know about failure)
+  
 
 ### 1.10.8. Amazon Aurora
 
@@ -3934,7 +4000,12 @@ changes can be applied to the target.
 CDC only migration is good if you have a vendor solution that works quickly
 and only changes need to be captured.
 
-Schema Conversion Tool or SCT can perform conversions between database types.
+Schema Conversion Tool or SCT can perform conversions between database types, including DB -> S3
+SCT not used for same types MySQL ----X---> RDS MySQL
+Works with OLTP and OLAP
+
+You can also use Snowball - A device you order from AWS, load your data, and send it to AWS where they use DMS
+Snowball uses SCT
 
 ---
 
@@ -3984,6 +4055,16 @@ You can use hybrid networking to connect to the same mount targets.
   - Standard
   - Infrequent access
   - Can use lifecycle policies to move data between classes.
+
+#### 1.11.2. AWS Backup
+Fully managed data protection service (backup/restore)
+Allows to consolidate management and storage to one place.. across accounts and regions
+
+Can create backup plans - freq, window, lifecycle
+what you need to backup
+
+Vaults - Backup to a destination (container)
+Can set vault locks - even AWS cant delete after a period, for compliance and stuff. Uses WORM model
 
 ---
 
