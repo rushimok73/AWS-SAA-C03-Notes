@@ -4082,10 +4082,18 @@ Without load balancing, this could bring additional problems.
   - Some requests take more CPU than others.
 - Failed instances will still show up in DNS cache.
   - Due to TTL values, a user can be directed toward a dead server.
+ 
+Never use v1(classic) Load balancers
 
 #### 1.12.1.1. Load Balancers Architecture
 
 The user connects to a load balancer that is set to listens on port 80 and 443.
+
+Load Balancing Nodes (1+) are placed in each subnet. These nodes then connect to computes(ex EC2) 
+
+There can be internet facing and private load balancers
+
+User --public LB--> Web Server --Private LB--> Application server
 
 Within AWS, the configuration for which ports the load balancer listens on is
 called a **listener**.
