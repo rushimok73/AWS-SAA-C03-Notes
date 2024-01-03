@@ -4112,6 +4112,12 @@ to that server. From the users client, the application always works.
 As long as 1+ servers are operational, the LB is operational.
 Clients shouldn't see errors that occur with one server.
 
+Cross Zone LB - Feature to load balance accross AZs (What happens when AZA has 10 instances but AZB only has 1)
+
+Instances dont need to be public to interface with a public ELB
+
+You need 8+ Free IPs per subnet (/28 techincally is ok, but we use /27 for scaling)
+
 #### 1.12.1.2. LB Exam PowerUp
 
 - Clients connect to the **listener** of the load balancer.
