@@ -4786,7 +4786,7 @@ Public service that provides fully managed highly available message queues.
     -----------------------------------------------|------------------------------------------------
     Multi lane highway                             | Single lane road with no way to overtake 
     best effort ordering and at least once delivery| guarantee the order and at exactly one delivery 
-    Extremely high throughput                      | 3000 messages p/s with batching or up to 300 messages p/s without | 
+    Extremely high throughput                      | 3000 messages p/s with batching or up to 300 messages p/s without
 
 Billed on **requests** not messages. A request is a single request to SQS.
 One request can return 0 - 10 messages up to 64KB data in total.
