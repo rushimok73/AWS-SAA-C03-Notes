@@ -4482,7 +4482,9 @@ Never store anything inside the runtime environment, it is ephemeral.
 
 Lambda functions by default are public services and can access any websites.
 By default they cannot access private VPC resources, but can be configured
-to do so if needed. Once configured, they can only access resources within a VPC.
+to do so if needed, by giving VPC services a security group and public endpoint.
+
+You can also put Lambda inside a VPC, and now its private by default.
 Unless you have configured your VPC to have all of the configuration needed
 to have public internet access or access to the AWS public space endpoints, then
 the Lambda will not have access.
@@ -4492,6 +4494,46 @@ and output. Something like DynamoDB or S3. If a Lambda is invoked by an event,
 it gets details of the event given to it at startup.
 
 Lambda functions can run up to 15 minutes. That is the max limit.
+
+**Security**
+Lambda functions assume execution roles in order to access the services they need during invocation.
+They also have resource policies to control which services can invoke lambda functions.
+
+**Logging**
+Logs from Lambda executions - CloudWatchLogs
+Metrics like invocation success/failures, retries, latency - CloudWatch
+Distributed Tracing - X-Ray
+
+CloudWatchLogs requires permissions via Execution Role
+
+
+**Invocations**
+-Synchronous 
+  -CLI/API invokes Lambda, then waits for a response.
+  -Errors or retries need to be handled by client
+  
+-Asynchronous
+  -Typically used by AWS Services.
+  -Request is sent, then the sender forgets. 
+  -Lambda responsible for reprocessing(0 to 2 retries). Thus, the lambda function needs to be idempotent(cannot be additive or subtractive, rerunning it doesn't cause extra changes)
+  -Supports destinations where successful or failed events can be sent.
+  -Events can be sent to dead letter queues after repeated failures.
+  
+-Event Source Mappings
+  -Typically used on streams or queues which dont support event generation to invoke lambda
+  -They use the same execution roles as Lambda, so Lambda  needs permission to what Source Mappings are polling.
+
+
+**Versions**
+Version = Code + Config of a version
+$Latest points at latest version
+Its immutable
+Alias - DEV, STAGE, PROD can point to specific versions. Can be changed.
+
+**Starts**
+Cold Start (100ms) - First run, run after a while. Lambda needs to create execution context, download code and config
+Warm Start (1-2ms)- Same execution context is reused.
+
 
 #### 1.13.2.2. Key Considerations
 
@@ -4561,7 +4603,37 @@ API stands for Application Programming Interface. It's a way that you can take a
 - Serve as an entry point for serverless architecture.
 - They come in handy during architecture evolution. For instance, if you have on premises legacy services that use APIs, this can be integrated.
 
+**Endpoint Types**
+-Edge Optimized
+  -Routed to the nearest CloudFront Point of Presence(POP)
+-Regional Endpoints
+  -Routed for clients in the same region
+-Private
+  -Endpoint accessible only within a VPC via interface endpoint.
+
+**Stages**
+-Each stage can have one deployment. Ex - V1 for PROD, V2 for DEV.
+-Can use 'canary deployments' to test a new feature on a part of PROD, then make canary the PROD
+
 Great during an architecture evolution because the endpoints don't change.
+
+**Errors**
+4XX - Client errors - Invalid req on client side 
+  -404 Bad request generic
+  -403 Access denied
+  -429 API Gateway on throttle. Means you exceeded that amt
+
+5XX - Server errors - Backend side issue
+  -502 Bad Gateway exception
+  -503 Service Unavailable
+  -504 Integration failure. API Gateway has a 29s timeout, so backing service needs to be aware of that
+
+**Caching**
+Cache TTL is default 300s (0s-3600s available)
+Cache size is 500MB to 237GB. 
+Cache can be encrypted
+Calls only made to backend when there is a cache miss
+
 
 1. Create a managed API and point at the existing monolithic application.
 2. Using API gateway allows the business to evolve along the way slowly.
@@ -4602,7 +4674,7 @@ transcode bucket using the DynamoDB entry.
 ### 1.13.6. Simple Notification Service (SNS)
 
 - HA, Durable, PUB/SUB messaging service.
-- Public AWS service meaning to access it, you need network connectivity
+- Public AWS service - meaning to access it, you need network connectivity
 with the Public AWS endpoints. The benefit of this is that it becomes accessible from anywhere that has that network connectivity.
 - Coordinates sending and delivering of messages: payloads that are up to 256KB in size.
   - Messages are not designed for large binary files.
