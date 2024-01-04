@@ -4133,6 +4133,9 @@ You need 8+ Free IPs per subnet (/28 techincally is ok, but we use /27 for scali
 ALB is a layer 7 or Application Layer Load Balancer. It is capable of inspecting data that passes through it. It can understand the application layer `http` and `https` and
 take actions based on things in those protocols like paths, headers, and hosts.
 
+HTTP/S connections are terminated on the ALB, and a new connection to the auto scaling groups is made. You need to use Network Load Balancers to keep using the same connection. 
+Thus, you cant have end-to-end encryption in ALB. But you can in NLB.
+
 ![OSI Model](/Learning-Aids/14-HA-and-Scaling/OSINetworkModel.png)
 
 All AWS load balancers are scalable and highly available. Capacity that you have as part of an ALB increases automatically based on the load which passes through that ALB. This is made of multiple ALB nodes each running in different AZs. This makes them scalable and highly available.
@@ -4145,10 +4148,6 @@ Internal load balancer is not accessible from the internet and is used to load b
 
 Load balancer sits between a client and one or more servers. Front end or listening side, accepts connections from a client. Back end is used for distribution to the targets.
 
-LB billed based on two things:
-
-1. A standard hourly rate.
-2. An LCU (**Load Balancer Capacity Unit**) rate. One LCU allows 25 connections per second, 3,000 active connections per minute, 1GB per hour for EC2 instances and IP addresses as targets, and 0.4GB per hour for Lambda functions as targets, and 1,000 rule evaluations per second. LCU that you consume is based on the highest value for all of the individual measurements. You pay a certain number of LCUs based on your load over that hour.
 
 #### 1.12.2.1. Cross zone load balancing
 
@@ -4174,7 +4173,6 @@ towards. Targets represents Lambda functions, EC2 instances, ECS containers.
   - path-based `/cat` or `/dog`
   - host-based if you want to use different DNS names.
 - Support EC2, EKS, Lambda, HTTPS, HTTP/2 and websockets.
-- ALB can use Server Name Indication (SNI)[^1] for multiple SSL certs attached to that LB.
   - LB can direct individual domain names using SSL certs at different target
   groups.
 - AWS does not suggest using Classic Load Balancer (CLB), these are legacy.
@@ -4244,6 +4242,17 @@ the status of HTTP and HTTPS requests. This makes them more application aware.
 - Generally, for anything client-facing you should always use Auto Scaling Groups (ASG) with Application Load Balancers (ALB) with autoscaling because they allow you to provide elasticity by abstracting the user away from individual servers. Since, the customers will be connecting through an ALB, they don't have any visibility of individual servers.
 - ASG defines WHEN and WHERE; Launch Templates defines WHAT.
 
+#### 1.12.4.2. ASG Lifecycle Hooks
+Allow you to configure custom actions during ASG actions (on instance launch or instance terminate)
+Before terminate or launch, hook happens OR Timeout = 3600 seconds
+
+#### 1.12.4.3. ASG Health Checks
+EC2 Healthy = NOT stopping, stopped, terminated, shutting down, impared, not 2/2 status
+ELB-Healthy =  EC2 Healthy + ELB Health Check
+Custom health check - your external health check
+
+Health check grace period - Delay before starting checks (waiting for instances to set up)
+
 ### 1.12.5. Network Load Balancer (NLB)
 
 Part of AWS Version 2 series of load balancers.
@@ -4263,6 +4272,15 @@ There is 1 interface per AZ. Can also use Elastic IPs (whitelisting on firewalls
 6. NLB can load balance non-HTTP/S applications, doesn't care about anything
 above TCP/UDP. This means it can handle load balancing for FTP or things
 that aren't HTTP or HTTPS.
+
+7. NLB can have end-to-end encryption.
+
+8. Use NLB for
+   - Unbroken encryption
+   - Static IP whitelisting
+   - Fast performance
+   - Non HTTP/S protocols
+   - PrivateLink
 
 ### 1.12.6. SSL Offload and Session Stickiness
 
@@ -4342,6 +4360,12 @@ new cookie
 This could cause backend unevenness because one user will always be forced
 to the same server no matter what the distributed load is. Applications
 should be designed to hold session stickiness somewhere other than EC2. You can hold session state in, for instance, DynamoDB. If store session state data externally, this means EC2 instances will be completely stateless.
+
+#### 1.12.7 Gateway Load Balancer
+
+Used for security. It makes it possible to scale security appliances separately. 
+Source and dest IP is preserved with GWLB, because of a tunneling protocol.
+
 
 ---
 
