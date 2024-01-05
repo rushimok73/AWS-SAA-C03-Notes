@@ -4809,6 +4809,14 @@ clients.
 Access to a queue is based on identity policies or a queue policy. Queue
 policies only can allow access from an outside account. This is a resource policy.
 
+**Delay Queues**
+Allow postponing delivery to consumers
+Delay queues don't make a message visible on the queue until a certain delay period. 
+This can be useful if you need to have some grace period before processing etc.
+
+**Dead Letter Queues**
+If a message keeps reappearing on the queue (deletion didn't happen by the client) then that message is redirected to a dead letter queue, where additional diagnostics can be performed.
+
 ### 1.13.9. Kinesis
 
 - Scalable streaming service. It is designed to inject data from
@@ -4828,10 +4836,41 @@ that can be ingested during a 24 hour period. However much you ingest during
 - Kinesis stream starts with 1 shard and expands as needed.
   - Each shard can have 1MB/s for ingestion and 2MB/s consumption.
 
-**Kinesis data records (1MB)** are stored across shards and are the blocks
-of data for a stream.
+**Kinesis data records (1MB)** are stored across shards and are the blocks of data for a stream.
 
 **Kinesis Data Firehose** connects to a Kinesis stream. It can move the data from a stream onto S3 or another service. Kinesis Firehose allows for the long term persistence of storage of kinesis data into services like S3. 
+
+Its a fully managed service to load data for data lakes, data stores and analytics services
+
+Automatic scaling, fully serverless, resilient
+
+Near real time delivery (~60 seconds) (kineses is fully real time)
+Firehose waits for 1MB of data or 60 seconds before transferring.
+
+
+Supports transformation of data on the fly (lambda)
+
+Valid consumers - HTTP endpoint, splunk, redshift, elasticsearch, destination bucket.
+
+
+**Kinesis Data Analytics**
+Provides Real time processing of data using SQL
+
+Ingests data from Kineses Data Streams OR Firehouse OR S3
+
+Destinations - Firehost, Lambda, Kineses Data Streams
+
+Data can be enriched using other sources. Ex Player info coming from Kineses Stream, Item info coming from S3
+
+When to use?
+- Time series analysis - elections/esports
+- Game dashboards
+
+**Kinesis Video Steams**
+Ingest live video data. 
+Cant access data directly. Can only access through Kinesis VS API.
+
+
 
 ### 1.13.10. SQS vs Kinesis
 
@@ -4855,6 +4894,41 @@ SQS
   Huge scale ingestion with multiple consumers| One consumption group from that tier| C2
   Rolling window for multiple consumers | Allow for async communications | C3
   Designed for data ingestion, analytics, monitoring, and app clicks | Once the message is processed, it is deleted | C3
+
+
+### 1.13.11 Amazon Cognito
+Provides authentication, authorization and user mgmt for web/mobile apps
+
+User Pools - You sign in and you get a JWT. Also can sign in using other logins like Google, FB etc
+
+Identity Pools - Allows access to Temp AWS Creds (assumes IAM role on behalf of identity)
+Can also provide unauthenticated identities (Guest Users)
+Can provide federated identities - Like FB, Google, and short-term AWS Creds to access AWS resources.
+
+### 1.13.12 AWS Glue
+Serverless ETL
+Moves and transforms data between source and destination
+Sources - S3, RDS, JDBC compatible, Dynamo DB | Kineses data stream & apache Kafka
+Targets - S3, RDS, JDBS Databases
+
+Data Catalog - Persistent metadata about data sources in region.
+You need to configure crawlers for data sources.
+
+
+### Amazon MQ
+
+Open source message broker based on Apache active MQ.
+VPC Based - Not a public service. 
+Cant use AWS Services with it
+
+Use SQS or SNS - new implementations, AWS integration not required
+Use Amazon MQ - migrate from existing system with no changes. 
+
+### Amazon App Flow
+Fully managed integration service
+Syncs data accross applications
+Aggregrates data from different source.
+Use case - copy contact records from Salesforce -> redshift, support tickets from zendesk -> s3
 
 ---
 
