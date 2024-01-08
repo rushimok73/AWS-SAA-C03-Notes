@@ -4951,9 +4951,28 @@ will fetch the item and cache it and deliver it locally.
   - Normally 90% storage with some small compute.
 - **Regional Edge Cache**
   - Larger version of an edge location.
-  - Support a number of local edge locations.
-  - Designed to hold more data to cache things which are accessed less often.
+  - Support several local edge locations.
+  - Designed to hold more data to cache things that are accessed less often.
   - Provides another layer of caching.
+ 
+- CloudFront only does READ caching no WRITE caching
+- Distributions contain behaviors. These behaviors path match to certain buckets and enforce policies
+
+**TTL and Invalidations**
+After being cached, if an object hasnt expired in edge location, but the source has updated the object, thats a problem.
+
+TTL
+ - Default TTL = 24 hours. You can set min and max TTL
+ - ttl = Math.max(ttl, min_ttl), ttl = Math.min(ttl, max_ttl)
+ - Cache-control max-age and Cache-control s-maxage headers set the TTL in seconds
+ - 'Expires' header helps you add a datetime TTL
+
+Invalidations
+ - Invalidates objects regardless of TTL on all edge locations
+ - You can pattern-match objects to invalidate. Takes time
+ - Dont invalidate all the time. Use versions. Versions work even if the browser has cached, as name will not be the same.
+
+
 
 #### 1.14.1.1. Caching Optimization
 
@@ -4983,9 +5002,23 @@ website then uses that certificate to prove its authenticity.
 - Supported AWS services ONLY (CloudFront, ALB and API Gateway, Elastic Beanstalk, CloudFormation, **NOT EC2**)
 - If it's not a managed service, ACM doesn't support it.
 - CloudFront must have a trusted and signed certificate. Can't be self signed.
+- ACM Is a regional service. **Certs cannot leave the region they are generated or imported in.**
+- ap-southeast-2 cert cant leave ap-southeast-2
+- Global services such as CloudFront operate as though within us-east-1
 
-### 1.14.3. Origin Access Identity (OAI)
+**CloudFront and SSL**
+default cloudfront domain name *.cloudfront.net/ is supported by default cert
+Alternate domain names need manual certs. For both HTTP/S you need to verify ownership using a matching certificate.
 
+Client <--> Edge and Edge <--> origin, both need public certificates.
+
+
+### 1.14.3. Origins
+You can either use AWS supported - S3, AWS media store ...
+or Custom origins(web server)
+Custom origins have more config options. S3 origins are easier to use.
+
+**Origin Access Identity (OAI)**
 1. Identity can be associated with a CloudFront distribution.
 2. The edge locations gain this identity.
 3. Create or adjust the bucket policy on the S3 origin. Add an explicit allow
@@ -4999,6 +5032,17 @@ will only get the implicit deny.
 Best practice is to create one OAI per CloudFront distribution to manage
 permissions.
 
+For non s3 origins
+1. Either use a custom header from edge location -> S3 origin
+2. Use traditional firewall, allowing cloudfront edge location IPs as these are public knowledge
+
+### 1.14.3. Delivering private content using behaviors
+Access can be public or private (requires signed cookie or URL)
+You either need a trusted signer with a CloudFront key or a trusted key group to create signed URLs and cookies.
+
+SignedUrls - only provide access to one object. 
+Cookies - provide access to a group of objects.
+ 
 ### 1.14.3.(1/2) Lambda@Edge
 
 - Permits to run lightweight Labda functions at Edge Locations
@@ -5031,6 +5075,7 @@ more internet based hops and this means a lower quality connection.
   the closest edge location.
   - Traffic then flows globally across the AWS global backbone network.
 - Global accelerator is a network product, and it uses non HTTP/S (TCP/UDP) protocols.
+- This **doesnt cache anything**
 - If you see questions that mention _caching_ that will most likely be CloudFront but, if you see questions that mention TCP or UDP and the requirement for _global performance optimization_ then possibly it's going to be global accelerator which is the right answer.
 
 ---
@@ -5050,7 +5095,7 @@ more internet based hops and this means a lower quality connection.
   - Interface directly
 - VPC flow logs are **NOT** realtime
 - Destination can be [S3](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-s3.html) or [CloudWatch logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-cwl.html)
-- Flow log inheritance is downwards starting at the VPC.
+- Flow log inheritance is downwards starting at the VPC. This means any data at subnet will be captured at VPC, and any data at Network interfaces will be captured at subnet and VPC.
 - RDS can use VPC flow logs
 - The packet will always have source, then destination, then response.
 - ICMP protocol number is 1; TCP is 6; UDP is 17.
@@ -5080,7 +5125,7 @@ Example of Flow Logs
 ```
 
 ### 1.15.2. Egress-Only Internet Gateway
-
+- ^ means only connections from in VPC to out.
 - IPv4 addresses are private or public
 - NAT allows IPv4 private IPs with a way to access public internet or public AWS services and receive responses.
 - NAT does this in a way that will not allow externally initiated connections (from the public internet) IN.
