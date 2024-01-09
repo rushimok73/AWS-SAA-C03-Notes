@@ -5537,7 +5537,23 @@ is invoked and changes a secret, the password can automatically change in RDS.
 Secrets are secured using KMS so you never risk any leakage via physical access
 to the AWS hardware and KMS ensures role separation.
 
-### 1.17.2. AWS Shield and WAF (Web Application Firewall)
+### 1.17.2. WAF and Web ACL
+
+**WEB ACLs**
+- Need to allocate one based on resource type and needs to be in same region if regional. Ex Cloudfront needs regional ACL (us-east-1)
+- Rule groups are processed in order
+- Default cap = 1500 units, can be increased with a ticket
+- Takes time to associate web ACLs with resources.
+
+**Rule Groups**
+Added to ACLs, can be yours, community, paid(community or AWS)
+Contains Rules
+  - Type, statement, action
+  - Type: Regular or rate based
+  - Statement: What it checks for. Can check IP, header, cookies...  body(*ONLY FIRST 8192 bytes)
+  - Action: Allow, Block, Count, Captcha or Custom response
+
+### AWS Shield
 
 Provides against DDoS attacks with AWS resources. This is a denial of
 service attack. Normally not possible to block them by using individual
@@ -5604,7 +5620,7 @@ HSM will not integrate with AWS by design and uses industry standard APIs.
 
 - **PKCS#11**
 - **Java Cryptography Extensions (JCE)**
-- **Microsoft CryptoNG (CNG) libraries**
+- **Microsoft CryptoNG (CN G) libraries**
 
 KMS can use CloudHSM as a **custom key store**, CloudHSM integrates with KMS.
 
@@ -5619,13 +5635,58 @@ AWS has no access to the HSM appliances which store the keys.
 
 #### 1.17.3.1. Cloud HSM Use Cases
 
-- No native AWS integration with AWS products. You can't use S3 SSE with
-CloudHSM.
+- No native AWS integration with AWS products. You can't use S3 SSE with CloudHSM.
 - Can offload the SSL/TLS processing from webservers. CloudHSM
 is much more efficient to do these encryption processes.
 - Oracle Databases can use CloudHSM to enable **transparent data encryption (TDE)**
 - Can protect the private keys an issuing certificate authority.
 - Anything that needs to interact with non AWS products.
+
+### 1.17.4 AWS Config
+- Record config changes over time on resources
+- Tracks pre, post changes. Good for auditing, compliance
+- Doesn't prevent from changes happening. Just notifies (can use SNS notifs)
+
+Features
+- Standard
+ - All changes are stored as a configuration Item (CI) into config bucket (S3)
+- Config Rules
+ - Can check for rules and do things based on that (lambda remediation, notify)
+
+### 1.17.5 Amazon Macie
+Data security and data privacy service.
+By using Macie, you know what you have and where it is.
+Uses ML/Patterns
+Can use
+  - Managed Data Identifiers - standard identifiers
+  - Custom data identifiers - using regex
+
+You can see findings via interface or Eventbridge (Lambda)
+Also does policy findings - disable encryption on S3, make S3 public, share bucket and so on..
+
+### 1.17.6 Amazon Inspector
+Designed to check EC2 instances, instance OS, containers, and report vulnerabilities and deviations.
+
+There are rule based checks
+ - Can check network reachability (where can an instance be accessed from. EC2, ALB, DX, ENI, ACL...... and so on)
+- Can recognize unrecognized ports
+
+Package checks 
+- Check packages, OS, common vulnerabilities and exposures.
+- Checks against CIS benchmarks
+- Checks best practises for security
+
+### 1.17.7 Amazon GuardDuty
+Continuous Security monitoring service.
+Uses data sources, AI/ML, intelligence feeds to identify unexpected and unauthorized activity.
+
+Can do lambda, SNS from that (findings -> eventbridge -> SNS(notify) or lambda (remediate))
+
+Checks DNS logs, VPC flow logs, Cloudtrail event logs, Cloudtrail mgmt events, S3 data events
+
+
+
+
 
 ---
 
