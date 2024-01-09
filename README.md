@@ -5237,6 +5237,16 @@ VPC Peering Connections CANNOT be created with overlapping VPC CIDRs.
 
 ## 1.16. Hybrid-and-Migration
 
+### IPSEC VPN
+Two main phases
+  - IKE Phase 1 - Slow and heavy - Asym encryp used to share sym key
+  - Phase 2 - Fast - Agree on encryption method and keys used for bulk data transfer
+
+Two types 
+  - Route based - ex send traffic on 196.1.1.0/16 On VPN
+  - Policy based - Different types of traffic have different SA and tunnels. 
+
+
 ### 1.16.1. AWS Site-to-Site VPN
 
 - A logical connection between a VPC and on-premise network encrypted in transit
@@ -5310,7 +5320,7 @@ VIFs running over the Direct Connect. Creating a virtual private gateway
 creates end points that are located inside the AWS public zone with public
 IP addresses. These end points have already been created and they already
 exist. We can create a VPN and instead of using the public internet as the
-transit network, you can use the public VIF running over Direct Connect.
+transit network, you can use the public VIF running over Direct Connect, since VGWs are public, even though the VPC is private.
 
 You run an IPSEC VPN over the public VIF, over the Direct Connect connection,
 you get all of the benefits of Direct Connect such as high speeds, and all
@@ -5340,8 +5350,11 @@ is required.
   - Allows for migration of existing infrastructure into AWS slowly.
 - Tape Gateway (VTL) Mode
   - Virtual Tapes are stored on S3
+  - Tape Library - S3 - 100GB - 5TB
+  - Tape Shelf - S3 Glacier - Unlimited
 - File Mode (SMB and NFS)
   - File Storage Backed by S3 Objects
+  - Does so via NFS (linux) or SMB (windows)
 - Volume Mode (Gateway Stored)
   - Block Storage backed by S3 and EBS
   - Great for disaster recovery
@@ -5352,6 +5365,7 @@ is required.
   - Backup to EBS Snapshots
   - Primarily stored on AWS
   - Great for limited local storage capacity.
+  - Capacity Extension
 
 ### 1.16.5. Snowball / Edge / Snowmobile
 
@@ -5415,8 +5429,7 @@ One common directory is **Active Directory** by Microsoft and its full name is
 - **Simple AD**: should be default. Designed for simple requirements.
 - **Microsoft AD**: is anything with Windows or if it needs a trust relationship
 with on-prem. This is not an emulation or adjusted by AWS.
-- **AD Connector**: Use AWS services without storing any directory info in the
-cloud, it proxies to your on-prem directory.
+- **AD Connector**: Use AWS services without storing any directory info in the cloud, it proxies to your on-prem directory.
 
 ### 1.16.7. AWS DataSync
 
@@ -5480,11 +5493,25 @@ windows filesystem or Directory Services.
 - 100 GB/s throughout & sub millisecond latencies
 - Deployment types **Persistent** or **Scratch**
   - Scratch - Optimized for Short term no replication & fast ( Designed for pure performance) - NO HA, NO REPLICATION
-  - Persistent - longer term, HA ( IN ONE AZ), self-healing
+  - Persistent - longer term, HA ( IN ONE AZ), self-healing on hardware failures, but if AZ fails cant do anything
 - Accessible over VPN or Direct Connect
-- Can be backed up to S3 ( Manual or Automatic 0-35 days retention)
+- Can be backed up to S3 for both types ( Manual or Automatic 0-35 days retention)
 
----
+### AWS Transfer Family
+Managed file transfer service from S3, EFS
+Provides managed servers which supports protocols which maybe not NFS or SMB ex - FTP, FTPS, SFTP, AS2
+
+Can define workflows after files are uploaded.
+
+Three types of endpoints
+-Public (only SFTP) Has dynamic IP, need DNS name
+-VPC Internet (SFTP, FTPS) Has static public IP
+-VPC Internal (SFTP, FTPS, FTP) no static public IP
+
+Mutli AZ
+Billed per hour + Data transferred
+
+----
 
 ## 1.17. Security-Deployment-Operations
 
