@@ -6068,3 +6068,58 @@ You can optimize the original data set to reduce the amount of space uses
 for the data and reduce the costs for querying that data. For more information see the AWS [documentation.](https://aws.amazon.com/cloudtrail/pricing/)
 
 [^1]: For more information on Server Name Indication see the Cloudfare SNI [documentation.](https://www.cloudflare.com/learning/ssl/what-is-sni/)
+
+
+## 1.19 Infra as Code
+
+### 1.19.1 Templates
+Template in YAML or JSON. Contains logical resources ‘THE WHAT’
+If stack template is updated, physical resources are updated
+If stack is deleted, resources are deleted.
+
+### 1.19.2 Template parameters
+You can define AllowedValues in templates, which are basically parameters. You will see these options in the console UI while creating a stack.
+Default is also provided
+
+Psuedo Paramters 
+- Injected by AWS
+- Example AWS:Region will be replaced with the current region
+
+### 1.19.3 Intrinsic functions
+Improves portability
+Can use functions like 
+- Ref, GetAtt, GetAZ, IF, And, etc.. inside templates
+- Ref and GetAZs are used a lot
+
+### 1.19.4 Cloudformation Mappings
+Like maps. Used to lookup values from a map like a pseudo parameter. Makes templates more portable
+Can perform one or two level lookups
+
+### 1.19.5 Cloudformation Outputs
+Optional
+You can declare outputs for a resource, and that is what will be visible in the console UI or CLI once the stack is in CREATE COMPLETE
+
+You can import these into other stacks.
+
+### 1.19.6 Cloudformation Conditions
+Declared within the optional "Conditions" section
+This section is evaluated first to TRUE or FALSE before resources are created.
+Logical resources have conditions associated with them.
+
+### 1.19.7 Cloudformation DependsOn
+CF does things in parallel usually to be efficient. 
+It is trying to find a dependency tree to do this during creations and deletions
+You can write explicit dependencies using DependsOn. Ex Resource A and B depends on C
+
+Ex. Elastic IP needs an Attached Internet Gateway to a VPC in order to work. Used Depends on for this before EIP is created.
+
+### 1.19.7 Cloudformation Signals
+Configure CF to wait 'X' num of success signals within a timeout (12 hour max), before CF goes into create complete
+
+Done using cfn-signal utility. Defined in creation policy
+
+WaitCondition
+- Is like CF signal + can send data back to CF
+- Creates a presigned URL for status into which a resource can send JSON data aswell
+
+### 1.19.8 CF Nested Stacks
