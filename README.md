@@ -1555,6 +1555,7 @@ Retrieval methods:
 - If an object is not accessed for 30 days, it will move into Standard-IA.
 
 This is good for objects that are unknown their access pattern.
+We have Standard -> Standard IA -> Glacier -> Deep Glacier
 
 ### 1.4.10. Object Lifecycle Management
 
