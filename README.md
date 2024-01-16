@@ -27,6 +27,7 @@ Action Items:
 - [1.16. Hybrid-and-Migration](#116-hybrid-and-migration)
 - [1.17. Security-Deployment-Operations](#117-security-deployment-operations)
 - [1.18. NoSQL-and-DynamoDB](#118-nosql-and-dynamodb)
+- [1.19. Infra as code]
 
 ---
 
@@ -5879,12 +5880,12 @@ Different view types influence what is in the stream.
 
 There are four view types that it can be configured with:
 
-- KEYS_ONLY : only shows the item that was modified
+- KEYS_ONLY : only shows the PK and/or SK of item that was modified
 - NEW_IMAGE : shows the final state for that item
 - OLD_IMAGE : shows the initial state before the change
 - NEW_AND_OLD_IMAGES : shows both before and after the change
 
-Pre or post change state might be empty if you use
+Pre or post change state might be empty (in NEW_AND_OLD_IMAGES) if you use
 **insert** or **delete**
 
 #### 1.18.3.1. Trigger Concepts
@@ -5901,7 +5902,7 @@ This is great for reporting and analytics in the event of changes such as
 stock levels or data aggregation.
 Good for data aggregation for stock or voting apps.
 This can provide messages or notifications and eliminates the
-need to poll databases.
+need to poll databases (saves RCU)
 
 ### 1.18.4. DynamoDB Local (LSI) and Global (GSI) Secondary Indexes
 
@@ -5946,9 +5947,7 @@ querying data, it will then fetch the data later in an inefficient way.
 
 **GSI as default** and only use LSI when **strong consistency** is required
 
-Indexes are designed when data is in a base table needs an alternative
-access pattern. This is great for a security team or data science team
-to look at other attributes from the original purpose.
+Indexes are designed when data is in a base table needs an alternative access pattern. This is great for a security team or data science team to look at other attributes from the original purpose.
 
 ### 1.18.5. DynamoDB Global Tables
 
@@ -6043,8 +6042,7 @@ that uses that data many times will benefit from DAX.
 only for the data consumed.
 - Start off with structured, semi-structured and even unstructured data that is
 stored in its raw form on S3.
-- Athena uses **schema-on-read**, the original data is never changed
-and remains on S3 in its original form.
+- Athena uses **schema-on-read**, the original data is never changed and remains on S3 in its original form.
 - The schema which you define in advance, modifies data in flight when its read.
 - Normally with databases, you need to make a table and then load the data in.
 - With Athena you create a schema and load data on this schema on the fly in
@@ -6064,11 +6062,60 @@ the data itself.
 
 This can be saved in the console or fed to other visualization tools.
 
+You can also get data from other sources (non AWS) using Athena Federated Query (uses lambda to pull data)
+
 You can optimize the original data set to reduce the amount of space uses
 for the data and reduce the costs for querying that data. For more information see the AWS [documentation.](https://aws.amazon.com/cloudtrail/pricing/)
 
 [^1]: For more information on Server Name Indication see the Cloudfare SNI [documentation.](https://www.cloudflare.com/learning/ssl/what-is-sni/)
 
+
+### 1.18.8 DynamoDB TTL
+You can provide a TTL for each items, after which they are marked as expired. A background process does this
+Another background process deletes expired items.
+
+### 1.18.9 Elasticache
+- In memory Db for high performance. But its not persistent
+- Managed Redis or Memcached.
+- Can be used to cache read heavy data
+- Reduces workloads
+- Usually stored for session data
+- Needs app code changes
+
+Use case
+- Store session data in external elasticache. If one instance goes down of EC2, switch to another, with session data from elasticache. No interruptions
+
+
+#### 1.18.9.1 Redis vs Memcached
+Memcached
+- Simple Data structures
+- No Replication
+- Multiple Nodes (sharding, manual)
+- No  backups
+- Multi Threaded
+
+Redis
+- Advanced Structures
+- Multi-AZ
+- Replicated(Scales Reads)
+- Has backup and restore
+- Has transactions (Fully applied or Not)
+
+### 1.18.10 Redshift
+- Petabyte scale Data Warehouse. Used for storage and analysis
+- It is OLAP(aggregated historic data from OLTP systems/ Column Based). Not OLTP(real time/ Row Based)
+- Stores in columns.
+- Server based. Provisioned Service
+- Uses cluster architecture.
+- One AZ in a VPC.
+- Each cluster has a leader NOde and other compute node.
+- Nodes have slices.
+
+- Redshift has Enhanced VPC routing - Traffic is then routed using VPC rules. Used for custom networking requirements
+- It has automatic snapshots to S3 (every 8hrs or 5GB)
+
+#### 1.18.10.1 Redshift DR and Recovery
+Redshift is single AZ, but you can manually take snapshots and store them in diff AZ/region, then restore them
 
 ## 1.19 Infra as Code
 
@@ -6111,7 +6158,7 @@ CF does things in parallel usually to be efficient.
 It is trying to find a dependency tree to do this during creations and deletions
 You can write explicit dependencies using DependsOn. Ex Resource A and B depends on C
 
-Ex. Elastic IP needs an Attached Internet Gateway to a VPC in order to work. Used Depends on for this before EIP is created.
+Ex. Elastic IP needs an Attached Internet Gateway to a VPC to work. Used Depends on for this before EIP is created.
 
 ### 1.19.7 Cloudformation Signals
 Configure CF to wait 'X' num of success signals within a timeout (12 hour max), before CF goes into create complete
@@ -6123,3 +6170,180 @@ WaitCondition
 - Creates a presigned URL for status into which a resource can send JSON data aswell
 
 ### 1.19.8 CF Nested Stacks
+Problems in stacks
+  - Max 500 resources per stack
+  - Cant easily reuse resources
+
+Parent / Root stack
+- Stack which contains nested stacks
+- Stack needs to be provided as a parameter. The link to the template URL has to be provided in the param
+- If the template has params, they need to be provided, unless they have default values.
+- Only the outputs (not resources) of the nested stack can be accessed in the parent stack. using NEWSTACK.Outputs.XXXX
+- Root stack can take params from one stack and send to other stack
+- There can be dependencies between nested stacks.
+
+- Nested stacks provide modularity, by reusing templates. They form a part of one solution.
+
+### 1.19.9 Cross stack references
+Issue with nested - only reuse template, not the resource
+
+So, 
+- Outputs from stacks can be exported. They must have unique name in a region. Using the Fn::ImportValue function instead of Ref
+- Cant be used cross account or cross region
+
+### 1.19.9 CF stacksets
+- Deploy CFN stacks accross many accounts or regions
+- They are containers in an admin account. They contain stack instances which reference stacks in 'target' accounts
+- You need to specify concurrent accounts (amt of accounts in which stacks are deployed simultaneously) so CA = 2 for 10 accounts means 5 x 2 deployments
+- Failure Tolerance - How many stacks are allowed to fail b4 we call it a fail
+- Retain stacks -  Retain stacks after deletion.
+
+Scenario
+- Enable AWS config
+- Make IAM roles
+
+
+### 1.19.10 CF deletion Policy
+Problem
+ - Data loss after stack deletion (think RDS, S3)
+
+You can specify policies
+- Delete(default)
+- Retain
+- Snapshot (if supported)
+
+Only applies to Delete.. Not replace operation
+
+### 1.19.11 CF Stack Roles
+Problem
+- CFN uses permissions of logged in identity
+
+CFN can assume a role to gain permissions to create resources. This enables role separation, even if admin doesnt have direct permissions
+
+### 1.19.12 cfn-init
+- Simple config mgmt system
+- User data is the HOW of what you want to do. User data updates dont actually do anything
+- cfn-init is WHAT you want to be done. Thus this is a
+- lso idempotent
+- So this can be cross platform (linux, windows)
+- Provided in Metadata of resource in template.
+
+### 1.19.13 cfn-hup
+- cfn-init is only run once
+- But cfn-hup detects changes in template metadata and reruns cfn-init. 
+
+### 1.19.14 CF changesets
+Change sets lets you preview changes on stacks. Chosen changes can be applied by executing the change sets
+
+
+
+### 1.19.13 CF custom resources
+This allows you to do things which CF doesnt (yet) natively support.
+Passes data to something, gets data back from something.
+
+Ex - 
+Lambda function can be a custom resource. Lets say an S3 bucket was created by CF, and some user then added objects to it. CF cannot delete this bucket now. However Lambda can.
+This means that CR has dependency on S3
+When deleting CR gets deleted before S3. You can configure lambda to clean up objects in bucket b4 deletion
+CF can  now delete the bucket.
+
+
+
+-----------
+## 1.20 ML 101
+
+### 1.20.1 Amazon Comprehend
+- NLP service
+- Input = Document, Output = Entities, Phrases, language, sentiment, syntax, Key Phrases
+- Real time for small workload, async for large
+- Pretrained models or custom
+
+### 1.20.2 Amazon Kendra
+- Intelligent Search Service. Used to mimic human expert
+- Factoid - Who, what, where questions
+- Descriptive - How do i get my cat to behave?
+- Keyword - Determines Intent
+
+- Kendra searches index - searchable data organized in efficient way
+- Data source - where your data lives. Kendra connects with index (S3, confluence, RDS..)
+- Synchronizes on a schedule
+- Integrates with AWS service(IAM, identity center(SSO)..)
+
+### 1.20.3 Amazon Lex
+- AI service which allows you to create a chatbot (text/ voice)
+- Powers Alexa Service.
+- Has Automatic Speech recog (ASR) - speech to text
+- Finds out intent using Natural Language Processing (NLU)-Intent
+- Scales, Integrates, Pay as you go
+- How to fulfill Intent? - Lambda Integration
+- You can have slots(data which you need _____ ) (__ size pizza, __ type crush)
+
+### 1.20.4 Amazon Polly
+- Converts text into life like speech (TTS)
+- Types 
+  - Standard TTS
+  - Neural TTS
+- Can use speech synthesis markup language(SSML) (ex make polly whisper, emphasize stuff etc)
+ 
+### 1.20.4 Amazon Rekognition
+- Deep Learning Image and Video Analysis
+- Identify object, people, text, activities, face etc...
+- Pay as you use (per image/ per min of video)
+- Can analyze live video by integrating with kineses video streams
+
+### 1.20.5 Amazon Textract
+- ML product used to analyze text contained in input docs
+- Input = JPEG, PNG, PDF, TIFF . Output = Extrated text, structure, analysis
+- Most docs = synchronous, large = async
+- pay as u use
+- Detects text and relationships between text
+- Can process document analysis, recepit analysis, identity docs
+
+### 1.20.6 Amazon Transcribe
+- Automatic Speech Recognition (ASR) service
+- Input = audio, output = text
+- Use cases
+  - Index audio
+  - Meeting notes
+  - subtitles/ caption
+  - Call analytics
+ 
+### 1.20.7 Amazon Translate
+- Translates text from one to another language
+- Encode reads source -> Semantic representation -> decoder reads meaning -> writes target language
+- Can auto-detect source language
+ 
+### 1.20.8 Amazon Forecast
+- Prediction in time series data
+- Need to import historical and related data
+- Understands whats normal and outputs a forecast and the reasons for the forecast
+
+### 1.20.9 Amazon Fraud Detector
+- identifies fraud.
+- Upload data, chose model type
+- Types
+ - Online fraud
+ - Transaction fraud
+ - Account Takeover
+
+### 1.20.10 Amazon Sagemaker
+- Collection/Package of services from AWS for ML
+- Used to fetch, clean, prepare, train, evaluate, deploy, monitor/collect
+- Sage Maker Studio - Build, train, debug, monitor models
+- SageMake Doman - container. Provided with EFS vol, users, app policies, vpcs.. isolation
+- Containers - Docker containers deployed to ML EC2 instances with OS, libs, tooling
+- Can host ML models and deploy endpoints for your models
+- Sagemaker has no cost, the resources it creates do.
+
+--------
+
+### 1.21 AWS Local Zones
+
+- AZs maybe 100s of kilometers from business premises
+- You can use local zones to tackle this.
+- You can have multiple local zones in an AZ
+- us-west-2a = us-west-2-las1 , us-west-2-lax-1a, us-west-2-lax-1b
+- You can then get low latencies
+- You can create subnets, VPCs, Ec2s in localzone
+- But certain things still rely on parent zone (ebs snapshots)
+
