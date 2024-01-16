@@ -1040,6 +1040,8 @@ management point for all the APIs and management events for that org.
 
 ## 1.4. Simple-Storage-Service-(S3)
 
+Max of 100 buckets per account
+
 ### 1.4.1. S3 Security
 
 **S3 is private by default!** The only identity which has any initial
