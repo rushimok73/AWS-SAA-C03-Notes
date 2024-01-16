@@ -2146,6 +2146,19 @@ bandwidth.
 NATGW cannot do port forwarding or be a bastion server. In that case it might
 be necessary to run a NAT EC2 instance instead.
 
+### 1.5.9. IGW vs NATGW
+Internet Gateway (IGW) allows instances with public IPs to access the internet.
+NAT Gateway (NGW) allows instances with no public IPs to access the internet.
+
+How does request routing work with a NAT Gateway?
+
+- Private Instance in a private subnet initiates the connection to the Internet.
+- The request to the internet goes through the NAT Gateway in the public subnet.
+- The NAT Gateway uses its public IP address to access the internet. It acts as the source of the request.
+- The NAT Gateway routes the request to the public internet via the Internet Gateway.
+- The response goes to the NAT Gateway.
+- The NAT Gateway forwards the response to the private instance that made the request.
+
 ---
 
 ## 1.6. Elastic-Cloud-Compute-EC2
