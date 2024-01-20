@@ -3162,6 +3162,7 @@ Parameter Store:
   - This integrates with **kms** to encrypt passwords.
 - Allows for public parameters such as the latest AMI parameter to be stored
 and referenced during EC2 creation
+- Doesnt allow for rotation like secrets manager natively. User has to configure
 - Is a public service so any services needs access to the public sphere or
 to be an AWS public service.
 - Applications, EC2 instances, lambda functions can all request access to
