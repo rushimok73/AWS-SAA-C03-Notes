@@ -4858,6 +4858,8 @@ that can be ingested during a 24 hour period. However much you ingest during
 
 **Kinesis Data Firehose** connects to a Kinesis stream. It can move the data from a stream onto S3 or another service. Kinesis Firehose allows for the long term persistence of storage of kinesis data into services like S3. 
 
+Kinesis Data Firehose currently supports Amazon S3, Amazon Redshift, Amazon OpenSearch Service, Splunk, Datadog, NewRelic, Dynatrace, Sumologic, LogicMonitor, MongoDB, and HTTP End Point as destinations. **IT does not support DynamoDB, RDS, Aurora**
+
 Its a fully managed service to load data for data lakes, data stores and analytics services
 
 Automatic scaling, fully serverless, resilient
