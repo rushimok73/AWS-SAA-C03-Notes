@@ -3254,10 +3254,10 @@ from each other. Several mirrors of an application; different nodes of an applic
 
 #### 1.8.6.3. Partition Placement -> Groups of Instances Spread Apart
 
-Groups of instances spread apart
+Groups of instances spread apart. Each group (partition) is one one rack
 
 If a problem occurs with one rack's networking or power, it will
-at most take out one instance.
+at most take out one partition.
 
 The main difference is you can launch as many instances in each partition
 as you desire.
