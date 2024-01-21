@@ -5670,6 +5670,7 @@ Features
  - All changes are stored as a configuration Item (CI) into config bucket (S3)
 - Config Rules
  - Can check for rules and do things based on that (lambda remediation, notify)
+ - It can also add tags based on the rules
 
 ### 1.17.5 Amazon Macie
 Data security and data privacy service.
