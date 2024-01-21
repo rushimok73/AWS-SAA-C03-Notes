@@ -2352,6 +2352,8 @@ size increases.
 
 ### 1.6.5. Elastic Block Store (EBS)
 
+** Outdated . Refer https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html **
+
 - Allocate block storage **volumes** to instances.
 - Volumes are isolated to one AZ.
   - The data is highly available and resilient for that AZ.
@@ -2371,6 +2373,7 @@ size increases.
   - T-put optimized HDD (st1)
     - maximum t-put for logs or media storage
   - Cold HDD (sc1)
+    
 
 #### 1.6.5.1. General Purpose SSD (gp2)
 
