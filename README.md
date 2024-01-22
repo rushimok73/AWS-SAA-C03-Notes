@@ -4255,7 +4255,7 @@ Self healing occurs when an instance has failed and AWS provisions a new
 instance in its place. This will fix most problems that are isolated to one
 instance.
 
-AGS can use the load balancer health checks rather than EC2.
+ASGs can use the load balancer health checks rather than EC2.
 ALB status checks can be much richer than EC2 checks because they can monitor
 the status of HTTP and HTTPS requests. This makes them more application aware.
 
