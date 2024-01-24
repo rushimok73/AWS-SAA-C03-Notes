@@ -6362,8 +6362,10 @@ CF can  now delete the bucket.
 
 --------
 
-### 1.21 AWS Local Zones
 
+### 1.21 Other Resources
+  
+** AWS Local Zones **
 - AZs maybe 100s of kilometers from business premises
 - You can use local zones to tackle this.
 - You can have multiple local zones in an AZ
@@ -6371,4 +6373,9 @@ CF can  now delete the bucket.
 - You can then get low latencies
 - You can create subnets, VPCs, Ec2s in localzone
 - But certain things still rely on parent zone (ebs snapshots)
+
+** AWS Trusted advisor**
+- Helps reduce cost, optimize resources
+- Helps implement best practises
+- Highlights security gaps using standards and best practises
 
