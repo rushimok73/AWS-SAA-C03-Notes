@@ -3311,6 +3311,8 @@ matching host size.
 
 ### 1.8.8. Enhanced Networking
 
+An Elastic Fabric Adapter (EFA) is a network device that you can attach to your Amazon EC2 instance to accelerate High Performance Computing (HPC) and machine learning applications.
+
 Enhanced networking uses SR-IOV.
 The physical network interface is aware of the virtualization.
 Each instance is given exclusive access to one part of a physical network
