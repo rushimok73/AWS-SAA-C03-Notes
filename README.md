@@ -2826,6 +2826,16 @@ Autorecovery can kick in and help,
   - useful in a cluster
 - Reboot this instance
 
+To design a resilient solution that can improve the recovery time for the system, a solutions architect should recommend creating an
+Amazon CloudWatch alarm to recover the EC2 instance in case of failure. This solution has the following benefits:
+It allows the EC2 instance to be automatically recovered when a system status check failure occurs, such as loss of network
+connectivity, loss of system power, software issues on the physical host, or hardware issues on the physical host that impact network
+reachability1.
+It preserves the instance ID, private IP addresses, Elastic IP addresses, and all instance metadata of the original instance.A recovered
+instance is identical to the original instance, except for any data that is in-memory, which is lost during the recovery process1.
+It does not require any modification of the application code or the EC2 instance configuration.The solutions architect can create a
+CloudWatch alarm using the AWS Management Console, the AWS CLI, or the CloudWatch API2.
+
 ### 1.6.13. Horizontal and Vertical Scaling
 
 #### 1.6.13.1. Vertical Scaling
