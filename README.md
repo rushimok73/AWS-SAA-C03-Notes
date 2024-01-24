@@ -2545,6 +2545,11 @@ able to do instant restores to. Each combination of Snapshot and AZ counts
 as one FSR set. You can have 50 FSR sets per region.
 FSR is not free and can get expensive with lost of different snapshots.
 
+You can use ** Amazon Data Lifecycle Manager ** to automate taking snapshots. 
+You can backup EBS volumes and AMIs backed by EBS volumes on a schedule. 
+You can also automate snapshot deletion or retain backups for compliance
+
+
 #### 1.6.8.2. Snapshot Consumption and Billing
 
 Billed using a GB/month metric.
@@ -6377,5 +6382,5 @@ CF can  now delete the bucket.
 ** AWS Trusted advisor**
 - Helps reduce cost, optimize resources
 - Helps implement best practises
-- Highlights security gaps using standards and best practises
+- Highlights security gaps using standards and best practices
 
