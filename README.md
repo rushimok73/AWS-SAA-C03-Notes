@@ -5062,6 +5062,9 @@ website then uses that certificate to prove its authenticity.
 - ap-southeast-2 cert cant leave ap-southeast-2
 - Global services such as CloudFront operate as though within us-east-1
 
+AWS Config can check for expired ACM's and notify SNS
+Eventbridge can also do the same
+
 **CloudFront and SSL**
 default cloudfront domain name *.cloudfront.net/ is supported by default cert
 Alternate domain names need manual certs. For both HTTP/S you need to verify ownership using a matching certificate.
