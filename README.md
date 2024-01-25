@@ -3476,6 +3476,13 @@ Registering = Communicate with TLD and share your NS
 ### 1.9.5. DNSSEC with R53
 Tough
 
+### 1.9.6 DNS failover policies
+
+Active-Active:
+  - Both records are returned in a DNS query. If a resource is deemed unhealthy, it will stop answering queries
+Active-Passive:
+  - One active resource, and one passive standby, routed to when the active resource is unhealthy
+
 ---
 
 ## 1.10. Relational-Database-Service-RDS
