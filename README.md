@@ -4963,6 +4963,7 @@ Targets - S3, RDS, JDBS Databases
 Data Catalog - Persistent metadata about data sources in region.
 You need to configure crawlers for data sources.
 
+You can load data into Apache Parquet format for increased performance
 
 ### Amazon MQ
 
