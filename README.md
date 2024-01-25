@@ -2012,6 +2012,8 @@ with your on premise identification service.
 Network Access Control Lists (NACLs) are a type of security filter
 (like firewalls) which can filter traffic as it enters or leaves a subnet.
 
+All subnets inside a VPC can communicate with each other, as there is a route table entry added by default. If you want to prevent subnets from talking to each other, you need an NACL.
+
 All VPCs have a default NACL, this is associated with all subnets of that VPC
 by default.
 NACLs are used when traffic enters or leaves a subnet.
