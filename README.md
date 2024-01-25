@@ -1541,6 +1541,10 @@ Retrieval methods:
 - Standard: 3 - 5 hours to restore.
 - Bulk: 5 - 12 hours. Has the lowest cost and is good for a large set of data.
 
+Two Subtypes
+  - Glacier Instant retrieval - Millisecond access to data (S3 standard fast) as long as it is accessed once a quarter
+  - Glacier Flexible retrieval - Async access. Retrieve once or twice a year
+
 #### 1.4.9.5. S3 Glacier Deep Archive
 
 - Designed for long term backups and as a tape-drive replacement.
