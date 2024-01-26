@@ -973,6 +973,11 @@ retention settings and permissions.
 Once the settings are defined on a log group, they apply to all log streams
 in that log group. Metric filters are also applied on the log groups.
 
+CloudWatch provides two categories of monitoring: basic monitoring and detailed monitoring.
+
+Basic - Reporting every 5 min
+Detailed - Reporting ever 1 min and more metrics
+
 ### 1.3.9. CloudTrail Essentials
 
 Concerned with who did what.
