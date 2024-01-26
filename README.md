@@ -3962,6 +3962,8 @@ It references the original storage and only stores the differences between
 the two. It uses a tiny amount of storage and only stores data that's changed
 in the clone or changed in the original after you make the clone.
 
+By using Aurora cloning, you can create a new cluster that initially shares the same data pages as the original, but is a separate and independent volume. The process is designed to be fast and cost-effective. 
+
 ### 1.10.9. Aurora Serverless
 
 Provides a version of Aurora database product without managing the resources.
