@@ -2670,6 +2670,9 @@ IP address.
 - 1 elastic IP per private IPv4 address
   - Can have 1 public elastic interface per private IP address on this interface.
 This is allocated to your AWS account.
+You can have one Elastic IP (EIP) address associated with a running instance at no charge. If you associate additional EIPs with that instance, you will be charged for each additional EIP associated with that instance per hour on a pro rata basis. Additional EIPs are only available in Amazon VPC.
+
+To ensure efficient use of Elastic IP addresses, we impose a small hourly charge when these IP addresses are not associated with a running instance or when they are associated with a stopped instance or unattached network interface. 
 Can associate with a private IP on the primary interface or secondary interface.
 If you are using a public IPv4 and assign an elastic IP, the original IPv4
 address will be lost. There is no way to recover the original address.
