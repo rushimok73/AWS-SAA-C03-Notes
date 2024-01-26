@@ -1135,6 +1135,8 @@ We could then change our DNS and move customers to a backup website on S3.
   - Data out is a per GB charge
 - Each operation has a cost per 1000 operations.
   - Can add up for static website hosting with many requests.
+- Data transfer within S3 buckets in the same region is free
+- In case of another account accessing you S3 buckets. You can enable a 'requester pays' features, so that you arent charged for data transfer
 
 ### 1.4.3. Object Versioning and MFA Delete
 
