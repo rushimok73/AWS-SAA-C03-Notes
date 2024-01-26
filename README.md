@@ -2262,7 +2262,8 @@ within the same AZ.
   - Storage networking
   - Data networking
 
-EC2 metrics dont monitor memory. You need to setup cloudwatchlogs for that
+EC2 metrics dont monitor memory. You need to setup cloudwatchlogs for that. You however get CPU Util, Reads/Writes and Network IN and OUT
+
 EC2 Networking (ENI)
 
 When instances are provisioned within a specific subnet within a VPC
