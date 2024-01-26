@@ -2245,6 +2245,7 @@ Tenancy:
   Pay for entire host, don't pay for instances.
 
 Dedicated - Start stop may change hardware. Dedicated host - HW never changes
+Quickest way to connect to Ec2 - Ec2 session manager
 
 - AZ resilient service. They run within only one AZ system.
   - You can't access them cross zone.
