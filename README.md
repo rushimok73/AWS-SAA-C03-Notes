@@ -2261,6 +2261,7 @@ within the same AZ.
   - Storage networking
   - Data networking
 
+EC2 metrics dont monitor memory. You need to setup cloudwatchlogs for that
 EC2 Networking (ENI)
 
 When instances are provisioned within a specific subnet within a VPC
@@ -2481,6 +2482,7 @@ at all.
 - Instance store volumes are local to EC2 host.
 - Can only be added at launch time. Cannot be added later.
 - Any data on instance store data is lost if it gets moved, or resized.
+- Data on instance store is lost if instance is terminated, stopped or failed.
 - Highest data performance in all of AWS.
 - You pay for it anyway, it's included in the price.
 - TEMPORARY
