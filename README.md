@@ -4987,6 +4987,8 @@ You need to configure crawlers for data sources.
 
 You can load data into Apache Parquet format for increased performance
 
+AWS Glue Bookmarks - Keeps track of what has been processed till now by the job
+
 ### Amazon MQ
 
 Open source message broker based on Apache active MQ.
