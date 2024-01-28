@@ -958,6 +958,8 @@ Comes with some AWS Integrations.
 Security is provided with IAM roles or Service roles
 Can generate metrics based on logs **metric filter**
 
+** You can stream cloudwatch logs to someplace else using a streaming subscription in near real time **
+
 #### 1.3.8.1. Architecture of CloudWatch Logs
 
 It is a regional service `us-east-1`
@@ -4080,6 +4082,10 @@ Works with OLTP and OLAP
 You can also use Snowball - A device you order from AWS, load your data, and send it to AWS where they use DMS
 Snowball uses SCT
 
+
+
+** RDS generates events like DB create, delete, terminate etc, but not data events like insertion, update, deletion **
+
 ---
 
 ## 1.11. Network-Storage-EFS
@@ -6439,4 +6445,11 @@ CF can  now delete the bucket.
 
 ** AWS Quicksight ** 
 Data Vis and BI tool, like PowerBI
+
+** Amazon MQ **
+This is a message queue, like RabbitMQ. 
+An active/standby broker is comprised of two brokers in two different Availability Zones, configured in a redundant pair.
+Usually, only one of the broker instances is active at any time, while the other broker instance is on standby. If one of the broker instances malfunctions or undergoes maintenance, it takes Amazon MQ a short while to take the inactive instance out of service. This allows the healthy standby instance to become active and to begin accepting incoming communications. When you reboot a broker, the failover takes only a few seconds.
+
+
 
