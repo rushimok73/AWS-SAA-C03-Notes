@@ -5233,6 +5233,9 @@ NAT, only outbound only.
 - To configure the Egress-only gateway, you must add default IPv6 route `::/0`
 added to RT with `eigw-id` as target.
 
+
+** THERE ARE TWO TYPES OF VPC ENDPOINTS**
+
 ### 1.15.3. VPC Gateway Endpoints
 
 - Provide _private_ access to S3 and DynamoDB
