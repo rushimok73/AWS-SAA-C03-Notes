@@ -5200,6 +5200,8 @@ Example of Flow Logs
 ```
 
 ### 1.15.2. Egress-Only Internet Gateway
+
+** THIS IS ONLY FOR IPv6 ADDRESSES **
 - ^ means only connections from in VPC to out.
 - IPv4 addresses are private or public
 - NAT allows IPv4 private IPs with a way to access public internet or public AWS services and receive responses.
