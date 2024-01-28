@@ -1416,6 +1416,8 @@ Server-Side encryption
 - Customer still needs to generate and manage the key.
 - S3 will see the unencrypted object throughout this process.
 
+** Does not provide automatic key rotation **
+
 SSE-C Encryption Steps
 
 1. When placing an object in S3, you provide encryption key and plaintext object
@@ -1435,6 +1437,8 @@ plaintext version of the object.
 AWS handles both the encryption and decryption process as well as the
 key generation and management. This provides very little control over how
 the keys are used, but has little admin overhead.
+
+** Does not provide automatic key rotation **
 
 SSE-S3 Encryption Steps
 
