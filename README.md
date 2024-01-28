@@ -980,6 +980,15 @@ CloudWatch provides two categories of monitoring: basic monitoring and detailed 
 Basic - Reporting every 5 min
 Detailed - Reporting ever 1 min and more metrics
 
+
+#### 1.3.8.2 Cloudwatch Alarms
+These can be set on certain metrics and go off when a certain threshold is exceeded
+With CloudWatch, you can combine several alarms into one composite alarm to create a summarized, aggregated health indicator over a whole application or group of resources. Composite alarms are alarms that determine their state by monitoring the states of other alarms. You define rules to combine the status of those monitored alarms using Boolean logic.
+
+#### 1.3.8.3 Cloudwatch Synthetic Canaries
+You can use Amazon CloudWatch Synthetics to create canaries, configurable scripts that run on a schedule, to monitor your endpoints and APIs. Canaries follow the same routes and perform the same actions as a customer, which makes it possible for you to continually verify your customer experience even when you don't have any customer traffic on your applications. By using canaries, you can discover issues before your customers do.
+
+
 ### 1.3.9. CloudTrail Essentials
 
 Concerned with who did what.
@@ -1703,6 +1712,17 @@ Filtering at the client side doesn't reduce this cost.
 S3 and Glacier select lets you use SQL-like statements to select part of the
 object which is returned in a filtered way.
 The filtering happens at the S3 service itself saving time and data.
+
+
+### 1.4.14 S3 Event notifications
+
+S3 can notify other resources when a CREATE/DELETE etc happens to an object
+here are the supported destinations 
+- Amazon Simple Notification Service (Amazon SNS) topics
+- Amazon Simple Queue Service (Amazon SQS) queues
+- AWS Lambda function
+- Amazon EventBridge
+
 
 ---
 
@@ -2834,6 +2854,9 @@ On-demand capacity reservations can be booked to ensure you always have capacity
 
 Hourly commitment for 1 or 3-year plan
 Reservation of general compute $ amounts (I am going to use x$ worth of compute for y years) Until you don't exceed the plan. After than normal on-demand billing
+
+#### 1.6.11.7. Spot Fleet
+A Spot Fleet is a set of Spot Instances and optionally On-Demand Instances that is launched based on criteria that you specify. The Spot Fleet selects the Spot capacity pools that meet your needs and launches Spot Instances to meet the target capacity for the fleet. By default, Spot Fleets are set to maintain target capacity by launching replacement instances after Spot Instances in the fleet are terminated.
 
 
 
@@ -6467,5 +6490,7 @@ This is a message queue, like RabbitMQ.
 An active/standby broker is comprised of two brokers in two different Availability Zones, configured in a redundant pair.
 Usually, only one of the broker instances is active at any time, while the other broker instance is on standby. If one of the broker instances malfunctions or undergoes maintenance, it takes Amazon MQ a short while to take the inactive instance out of service. This allows the healthy standby instance to become active and to begin accepting incoming communications. When you reboot a broker, the failover takes only a few seconds.
 
+** AWS Amplify ** 
+Manily used to create low code mobile and full stack apps (single page static usually) within hours
 
 
