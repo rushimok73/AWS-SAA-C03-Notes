@@ -6437,3 +6437,6 @@ CF can  now delete the bucket.
 - Helps implement best practises
 - Highlights security gaps using standards and best practices
 
+** AWS Quicksight ** 
+Data Vis and BI tool, like PowerBI
+
