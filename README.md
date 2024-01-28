@@ -1349,6 +1349,10 @@ Aliases are also per region. You can create a `MyApp1` alias in all regions
 but they would be separate aliases, and in each region it would be pointing
 potentially at a different CMK.
 
+
+** Multi Region Keys **
+ It allows you to use the same encryption keys across multiple regions, which simplifies the process of encrypting and decrypting data as it is transferred between regions. 
+
 #### 1.4.6.4. Key Policy (resource policy)
 
 - Every CMK has one.
@@ -3801,6 +3805,9 @@ in time. This influences the RPO value.
 desired point in time.
 - Restores aren't fast, think about RTO.
 
+### 1.10.5 RDS Encryption
+You can enable encryption for an Amazon RDS DB instance when you create it, but not after it's created. However, you can add encryption to an unencrypted DB instance by creating a snapshot of your DB instance, and then creating an encrypted copy of that snapshot. You can then restore a DB instance from the encrypted snapshot to get an encrypted copy of your original DB instance.
+
 ### 1.10.6. RDS Read-Replicas
 
 Kept in sync using **asynchronous replication**
@@ -5683,6 +5690,12 @@ Once the data reaches the VPC, it has been filtered at Layer 3, 4, and 7
 already.
 
 Layer 7 filtering is only provided by WAF.
+
+
+### 1.17.3 Firewall manager
+AWS Firewall Manager is a security management service that allows you to centrally configure and manage firewall rules across your accounts and applications in AWS Organizations. As new applications are created, Firewall Manager makes it easier to bring new applications and resources into compliance by enforcing a common set of security rules.
+Can only work on resources in a region. 
+Can configure WAFs
 
 ### 1.17.3. CloudHSM
 
