@@ -5087,6 +5087,9 @@ Invalidations
  - Dont invalidate all the time. Use versions. Versions work even if the browser has cached, as name will not be the same.
 
 
+Security
+- You can use Cloudfront field level encryption to encrypt object from user. The sensitive information provided by your users is encrypted at the edge, close to the user, and remains encrypted throughout your entire application stack. This encryption ensures that only applications that need the data—and have the credentials to decrypt it—are able to do so.
+
 
 #### 1.14.1.1. Caching Optimization
 
@@ -5698,6 +5701,7 @@ against increased costs.
     - cross-site scripting
     - geo blocks
     - rate awareness
+  - You can allow country access (geolocation-based address) using ACLs
   - WEBACL integrated with Load Balancers, API gateways, and CloudFront.
     - Rules are added to WEBACL and evaluated when traffic arrives.
 
