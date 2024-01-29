@@ -1408,6 +1408,8 @@ Two main methods of encryption S3 is capable of supporting.
 Both types are encryption at rest. Data sent from a user to S3 is automatically
 encrypted in transit outside of these methods.
 
+Once you enable encryption, previous objects arent encrypted. You need to use the S3 Inventory feature to create a .csv file that lists the unencrypted objects. Run an S3 Batch Operations job that uses the copy command to encrypt those objects
+
 Client-Side encryption
 
 - Objects being encrypted by the client before they leave.
@@ -1587,7 +1589,7 @@ Two Subtypes
 - If an object is not accessed for 30 days, it will move into Standard-IA.
 
 This is good for objects that are unknown their access pattern.
-We have Standard -> Standard IA -> Glacier -> Deep Glacier
+We have Standard -> Standard IA -> Glacier IA
 
 ### 1.4.10. Object Lifecycle Management
 
@@ -1599,7 +1601,7 @@ A lifecycle configuration is a set of **rules** that consists of **actions**.
 Change the storage class over time such as:
 
 - Move an object from S3 to IA after 90 days
-- After 180 days move to Glacier
+- After 180 days move to Glacier IA 
 - After one year move to Deep Archive
 
 Objects must flow downwards, they can't flow in the reverse direction.
@@ -5017,6 +5019,7 @@ User Pools - You sign in and you get a JWT. Also can sign in using other logins 
 Identity Pools - Allows access to Temp AWS Creds (assumes IAM role on behalf of identity)
 Can also provide unauthenticated identities (Guest Users)
 Can provide federated identities - Like FB, Google, and short-term AWS Creds to access AWS resources.
+It can also authenticate users with Cognito User Pool Authorizer
 
 ### 1.13.12 AWS Glue
 Serverless ETL
@@ -6504,4 +6507,11 @@ With Elastic Beanstalk, you can quickly deploy and manage applications in the AW
 
 It can do feature testing by URL swapping
 
+** Amazon Pinpoint **
+You can use Amazon Pinpoint to send push notifications, in-app notifications, emails, text messages, voice messages, and messages over custom channels.
 
+** Amazon Contact ** 
+Tool for customer support and management
+
+** Resource Groups Tag Editor ** 
+Used to manage tags of resources at scale
