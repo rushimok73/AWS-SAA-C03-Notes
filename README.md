@@ -4172,6 +4172,8 @@ Allows to consolidate management and storage to one place.. across accounts and 
 Can create backup plans - freq, window, lifecycle
 what you need to backup
 
+Can backup RDS from one region to another
+
 Vaults - Backup to a destination (container)
 Can set vault locks - even AWS cant delete after a period, for compliance and stuff. Uses WORM model
 
@@ -6496,5 +6498,10 @@ Usually, only one of the broker instances is active at any time, while the other
 
 ** AWS Amplify ** 
 Manily used to create low code mobile and full stack apps (single page static usually) within hours
+
+** AWS Beanstalk **
+With Elastic Beanstalk, you can quickly deploy and manage applications in the AWS Cloud without having to learn about the infrastructure that runs those applications. Elastic Beanstalk reduces management complexity without restricting choice or control. You simply upload your application, and Elastic Beanstalk automatically handles the details of capacity provisioning, load balancing, scaling, and application health monitoring.
+
+It can do feature testing by URL swapping
 
 
